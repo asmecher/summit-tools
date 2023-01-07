@@ -21,6 +21,23 @@ import os
 
 resolutions = [
     [
+        "(ojs|omp|ops)\/stable-3_3_0\/plugins\/importexport\/native\/locale\/[a-zA-Z_]+\/locale.po[t]?$",
+        "summits\/(ojs|omp|ops)\/plugins-importexport-native-locale\/[a-zA-Z_]+\/plugins-importexport-native-locale-locale.po[t]?$",
+        "##stable-3_3_0##",
+        {
+            "plugins.importexport.native.cliUsage",
+            "plugins.importexport.native.error.unknownUser",
+        }
+    ],
+    [
+        "(ojs|omp|ops)\/stable-3_3_0\/plugins\/paymethod\/manual\/locale\/[a-zA-Z_]+\/emails.po[t]?$",
+        "summits\/(ojs|omp|ops)\/plugins-paymethod-manual-locale\/[a-zA-Z_]+\/plugins-paymethod-manual-locale-emails.po[t]?$",
+        "##stable-3_3_0##",
+        {
+            "emails.manualPaymentNotification.body",
+        }
+    ],
+    [
         "(ojs|omp|ops)\/stable-3_3_0\/locale\/[a-zA-Z_]+\/locale.po[t]?$",
         "summits\/(ojs|omp|ops)\/locale\/[a-zA-Z_]+\/locale-locale.po[t]?$",
         "##stable-3_3_0##",
@@ -125,13 +142,13 @@ S.summit = dict(
 #
 S.branches = [
     dict(id="stable-3_3_0",
-        topdir=S.relpath("../%s/stable-3_3_0/%s/%s" % (os.environ['REPO'], os.environ['BASE'].replace('/', '-'), S.lang)),
-        topdir_templates=S.relpath("../%s/stable-3_3_0/%s/templates" % (os.environ['REPO'], os.environ['BASE'].replace('/', '-'))),
+        topdir=S.relpath("../%s/stable-3_3_0/%s/%s" % (os.environ['REPO'], os.environ['BASE'], S.lang)),
+        topdir_templates=S.relpath("../%s/stable-3_3_0/%s/templates" % (os.environ['REPO'], os.environ['BASE'])),
         transform_path=(split_branch_path, join_branch_path)
     ),
     dict(id="main",
-        topdir=S.relpath("../%s/main/%s/%s" % (os.environ['REPO'], os.environ['BASE'].replace('/', '-'), S.lang)),
-        topdir_templates=S.relpath("../%s/main/%s/templates" % (os.environ['REPO'], os.environ['BASE'].replace('/', '-'))),
+        topdir=S.relpath("../%s/main/%s/%s" % (os.environ['REPO'], os.environ['BASE'], S.lang)),
+        topdir_templates=S.relpath("../%s/main/%s/templates" % (os.environ['REPO'], os.environ['BASE'])),
         transform_path=(split_branch_path, join_branch_path)
     ),
 ]

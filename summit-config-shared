@@ -7,57 +7,71 @@ import os
 #
 # Each resolution entry looks like this:
 #
-# ["regular expression to match branch filename", "suffix to append to matching msgids",
+# [
+#  "regular expression to match branch filename",
+#  "regular expression to match summit filename",
+#  "suffix to append to matching msgids",
 #  {"list", "of", "msgids", "to", "match"}
 # ]
 #
-# If the filename (e.g. .po or .pot) matches the filename, then all listed locale keys
+# If the branch filename (e.g. .po or .pot) matches the first regexp, then all listed locale keys
 # will have the specified suffix added to them before they are ingested by posummit, and
-# stripped off them again as they are scattered back to the branches.
+# stripped off them again as they are scattered back to the branches if the summit filename
+# matches the second regexp.
 
 resolutions = [
-    ["branches\/stable-3_3_0\/locale\/[a-zA-Z_]+\/locale.po[t]?$", "##stable-3_3_0##", {
-        "installer.installationInstructions",
-    }],
-    ["branches\/stable-3_3_0\/locale\/[a-zA-Z_]+\/emails.po[t]?$", "##stable-3_3_0##", {
-        "emails.announcement.body",
-        "emails.passwordResetConfirm.body",
-        "emails.passwordReset.body",
-        "emails.userRegister.body",
-        "emails.reviewerRegister.body",
-        "emails.lockssExistingArchive.body",
-        "emails.lockssNewArchive.body",
-        "emails.editorAssign.subject",
-        "emails.editorAssign.body",
-        "emails.reviewRequest.body",
-        "emails.reviewRequestSubsequent.body",
-        "emails.reviewCancel.body",
-        "emails.reviewReinstate.body",
-        "emails.reviewConfirm.body",
-        "emails.reviewDecline.body",
-        "emails.reviewRemind.body",
-        "emails.reviewRemindAuto.body",
-        "emails.editorDecisionAccept.body",
-        "emails.layoutRequest.body",
-        "emails.layoutComplete.body",
-        "emails.emailLink.body",
-        "emails.subscriptionNotify.body",
-        "emails.openAccessNotify.body",
-        "emails.subscriptionBeforeExpiry.body",
-        "emails.subscriptionAfterExpiry.body",
-        "emails.subscriptionAfterExpiryLast.body",
-        "emails.subscriptionPurchaseIndl.body",
-        "emails.subscriptionPurchaseInstl.body",
-        "emails.subscriptionRenewIndl.body",
-        "emails.subscriptionRenewInstl.body",
-        "emails.citationEditorAuthorQuery.body",
-        "emails.revisedVersionNotify.body",
-        "emails.statisticsReportNotification.body",
-        "emails.announcement.subject",
-        "emails.reviewReinstate.subject",
-        "emails.editorDecisionAccept.subject",
-        "emails.layoutRequest.subject",
-    }],
+    [
+        "(ojs|omp|ops)\/stable-3_3_0\/locale\/[a-zA-Z_]+\/locale.po[t]?$",
+        "summits\/(ojs|omp|ops)\/locale\/[a-zA-Z_]+\/locale-locale.po[t]?$",
+        "##stable-3_3_0##",
+        {
+            "installer.installationInstructions",
+        }
+    ],
+    [
+        "(ojs|omp|ops)\/stable-3_3_0\/locale\/[a-zA-Z_]+\/emails.po[t]?$",
+        "summits\/(ojs|omp|ops)\/locale\/[a-zA-Z_]+\/locale-emails.po[t]?$",
+        "##stable-3_3_0##",
+        {
+            "emails.announcement.body",
+            "emails.passwordResetConfirm.body",
+            "emails.passwordReset.body",
+            "emails.userRegister.body",
+            "emails.reviewerRegister.body",
+            "emails.lockssExistingArchive.body",
+            "emails.lockssNewArchive.body",
+            "emails.editorAssign.subject",
+            "emails.editorAssign.body",
+            "emails.reviewRequest.body",
+            "emails.reviewRequestSubsequent.body",
+            "emails.reviewCancel.body",
+            "emails.reviewReinstate.body",
+            "emails.reviewConfirm.body",
+            "emails.reviewDecline.body",
+            "emails.reviewRemind.body",
+            "emails.reviewRemindAuto.body",
+            "emails.editorDecisionAccept.body",
+            "emails.layoutRequest.body",
+            "emails.layoutComplete.body",
+            "emails.emailLink.body",
+            "emails.subscriptionNotify.body",
+            "emails.openAccessNotify.body",
+            "emails.subscriptionBeforeExpiry.body",
+            "emails.subscriptionAfterExpiry.body",
+            "emails.subscriptionAfterExpiryLast.body",
+            "emails.subscriptionPurchaseIndl.body",
+            "emails.subscriptionPurchaseInstl.body",
+            "emails.subscriptionRenewIndl.body",
+            "emails.subscriptionRenewInstl.body",
+            "emails.citationEditorAuthorQuery.body",
+            "emails.revisedVersionNotify.body",
+            "emails.statisticsReportNotification.body",
+            "emails.announcement.subject",
+            "emails.reviewReinstate.subject",
+            "emails.editorDecisionAccept.subject",
+            "emails.layoutRequest.subject",
+        }
+    ],
 ]
 
 #
@@ -80,8 +94,8 @@ def join_branch_path (domain, subdir, bylang):
 #
 def resolve_dups_from_branch_message (msg, cat):
     for resolution in resolutions:
-        if re.search(resolution[0], cat._filename) and msg.msgid in resolution[2]:
-            msg.msgid = msg.msgid + resolution[1]
+        if re.search(resolution[0], cat._filename) and msg.msgid in resolution[3]:
+            msg.msgid = msg.msgid + resolution[2]
 
 S.hook_on_gather_msg_branch = [
     (resolve_dups_from_branch_message,),
@@ -89,8 +103,8 @@ S.hook_on_gather_msg_branch = [
 
 def resolve_dups_to_branch (msg, cat):
     for resolution in resolutions:
-        if re.search(resolution[0], cat._filename) and msg.msgid in resolution[2] and msg.msgid.endswith(resolution[1]):
-            msg.msgid = msg.msgid[0:-len(resolution[1])]
+        if re.search(resolution[1], cat._filename) and msg.msgid.endswith(resolution[2]) and (msg.msgid[0:-len(resolution[2])]) in resolution[3]:
+            msg.msgid = msg.msgid[0:-len(resolution[2])]
 
 S.hook_on_scatter_msg = [
     (resolve_dups_to_branch,),
@@ -102,8 +116,8 @@ S.hook_on_scatter_msg = [
 S.over_templates = True
 
 S.summit = dict(
-    topdir=S.relpath("summits/%s/%s" % (os.environ['BASE'].replace('/', '-'), S.lang)),
-    topdir_templates=S.relpath("summits/%s/templates" % os.environ['BASE'].replace('/', '-'))
+    topdir=S.relpath("summits/%s/%s/%s" % (os.environ['REPO'], os.environ['BASE'].replace('/', '-'), S.lang)),
+    topdir_templates=S.relpath("summits/%s/%s/templates" % (os.environ['REPO'], os.environ['BASE'].replace('/', '-')))
 )
 
 #
@@ -111,13 +125,13 @@ S.summit = dict(
 #
 S.branches = [
     dict(id="stable-3_3_0",
-        topdir=S.relpath("../branches/stable-3_3_0/%s/%s" % (os.environ['BASE'].replace('/', '-'), S.lang)),
-        topdir_templates=S.relpath("../branches/stable-3_3_0/%s/templates" % os.environ['BASE'].replace('/', '-')),
+        topdir=S.relpath("../%s/stable-3_3_0/%s/%s" % (os.environ['REPO'], os.environ['BASE'].replace('/', '-'), S.lang)),
+        topdir_templates=S.relpath("../%s/stable-3_3_0/%s/templates" % (os.environ['REPO'], os.environ['BASE'].replace('/', '-'))),
         transform_path=(split_branch_path, join_branch_path)
     ),
     dict(id="main",
-        topdir=S.relpath("../branches/main/%s/%s" % (os.environ['BASE'].replace('/', '-'), S.lang)),
-        topdir_templates=S.relpath("../branches/main/%s/templates" % os.environ['BASE'].replace('/', '-')),
+        topdir=S.relpath("../%s/main/%s/%s" % (os.environ['REPO'], os.environ['BASE'].replace('/', '-'), S.lang)),
+        topdir_templates=S.relpath("../%s/main/%s/templates" % (os.environ['REPO'], os.environ['BASE'].replace('/', '-'))),
         transform_path=(split_branch_path, join_branch_path)
     ),
 ]

@@ -65,11 +65,11 @@ You should now have a tree that looks like this:
 └── summit
 ```
 
-### 3. Perform any necessary repository preparation
+## Repository Preparation
 
-When starting to us a summit-based translation process with preexisting repositories, some preparation will be required.
+When starting to use a summit-based translation process with a preexisting repository, some preparation will be required.
 
-For **each branch** of repository:
+For **each branch** of the repository:
 
 ```bash
 cd /path/to/repository/branch

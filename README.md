@@ -67,6 +67,8 @@ You should now have a tree that looks like this:
 
 ## Repository Preparation
 
+If you are already using weblate on the repository, make sure you merge any outstanding translations from weblate.
+
 When starting to use a summit-based translation process with a preexisting repository, some preparation will be required.
 
 For **each branch** of the repository:
@@ -96,3 +98,64 @@ git add -u
 git commit -m "Rearrange locale files according to templates"
 git push
 ```
+
+## Summiting / scattering
+
+**Summiting** is the process of bringing translations together from various branches into a single place (the "summit"). **Scattering** is the process of sending any relevant changes from the summit back to the branches where they can be committed and pushed to Github.
+
+### If Weblate sends translations to the repo's main branch
+
+This should be considered an interim configuration. For a complete summiting process, Weblate should be configured to send translations directly to the summit, rather than the repo; [new locale keys should be added to the summit, not the branch, and all translation work should take place exclusively in the summit](http://pology.nedohodnik.net//doc/user/en_US/ch-summit.html#sec-suproblems).
+
+However, if only as an interim configuration, it is possible for translations in one branch (probably `main`) of a repository to be the "definitive" source of translations (i.e. Weblate sends translations there), and for posummit to be used to port those translations back to other branches.
+
+The disadvantage to this approach is that other branches will only receive partial translations. They will receive the parts of the translation that apply directly (e.g. to all branches), but not alternative translations of content that differs between branches.
+
+### Summiting
+
+#### 1. Prepare each branch:
+
+```sh
+cd summit-basepath/repository/branch
+```
+
+1. Update the branch checkout:
+    ```sh
+    git pull
+    ```
+2. (Re)create the templates:
+    ```sh
+    sh ../../summit/create-templates.sh
+    ```
+
+#### 2. Gather and scatter the summit:
+
+```sh
+cd summit-basepath/summit
+```
+
+1. Create the summit templates (e.g. for the `staticPages` repo):
+    ```sh
+    sh gather-templates.sh staticPages
+    ```
+2. Create the summit for each locale (e.g. for the `staticPages` repo):
+    ```sh
+    sh gather-locales.sh staticPages
+    ```
+3. Merge the summit for each locale (e.g. for the `staticPages` repo):
+    ```sh
+    sh merge-locales.sh staticPages
+    ```
+4. Scatter the summit to each branch (e.g. for the `staticPages` repo):
+    ```sh
+    sh scatter-locales.sh staticPages
+    ```
+#### 3. Handle changes to each branch:
+
+```sh
+cd summit-basepath/repository/branch
+```
+
+Use `git diff` / `git add -u` / `git commit` / `git push` to review and push the changes to the git repo.
+
+If there are any locale keys that got scattered that are not appropriate for the branch, edit `summit-config-shared` and add the keys / file to the list of resolutions. This will ensure that the locale key in the specified branch/file is kept distinct from an incompatible key in another branch.

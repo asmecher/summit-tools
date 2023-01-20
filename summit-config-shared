@@ -3,7 +3,7 @@ import re
 import os
 
 # List of "resolutions": Changes that are applied to locale key msgids to make them unique,
-# so that incompatible locale keys that appear differently several branches are preserved.
+# so that incompatible locale keys that appear differently in multiple branches are preserved.
 #
 # Each resolution entry looks like this:
 #
@@ -15,8 +15,8 @@ import os
 # ]
 #
 # If the branch filename (e.g. .po or .pot) matches the first regexp, then all listed locale keys
-# will have the specified suffix added to them before they are ingested by posummit, and
-# stripped off them again as they are scattered back to the branches if the summit filename
+# will have the specified suffix added to them before they are ingested by posummit. The suffix
+# will be stripped off them again as they are scattered back to the branches if the summit filename
 # matches the second regexp.
 
 resolutions = [

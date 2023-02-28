@@ -19,6 +19,59 @@ import os
 # will be stripped off them again as they are scattered back to the branches if the summit filename
 # matches the second regexp.
 
+stableCodeMap = {
+    "ar": "ar_IQ",
+    "bs": "bs_BA",
+    "ca": "ca_ES",
+    "cs": "cs_CZ",
+    "da": "da_DK",
+    "de": "de_DE",
+    "el": "el_GR",
+    "en": "en_US",
+    "es": "es_ES",
+    "eu": "eu_ES",
+    "fa": "fa_IR",
+    "fi": "fi_FI",
+    "fr": "fr_CA",
+    "fr": "fr_FR",
+    "gd": "gd_GB",
+    "he": "he_IL",
+    "hi": "hi_IN",
+    "hr": "hr_HR",
+    "hu": "hu_HU",
+    "hy": "hy_AM",
+    "id": "id_ID",
+    "is": "is_IS",
+    "it": "it_IT",
+    "ja": "ja_JP",
+    "ka": "ka_GE",
+    "kk": "kk_KZ",
+    "ko": "ko_KR",
+    "ckb": "ku_IQ",
+    "mk": "mk_MK",
+    "mn": "mn_MN",
+    "nb": "nb_NO",
+    "nl": "nl_NL",
+    "pl": "pl_PL",
+    "pt": "pt_BR",
+    "pt": "pt_PT",
+    "ro": "ro_RO",
+    "ru": "ru_RU",
+    "sk": "sk_SK",
+    "sl": "sl_SI",
+    "sr@cyrillic": "sr_RS@cyrillic",
+    "sr@latin": "sr_RS@latin",
+    "sv": "sv_SE",
+    "tr": "tr_TR",
+    "uk": "uk_UA",
+    "ur": "ur_PK",
+    "uz@cyrillic": "uz_UZ@cyrillic",
+    "uz@latin": "uz_UZ@latin",
+    "vi": "vi_VN",
+    "zh": "zh_CN",
+    "zh_Hant": "zh_TW"
+}
+
 resolutions = [
     [
         "(ojs|omp|ops)\/stable-3_3_0\/plugins\/importexport\/native\/locale\/[a-zA-Z_]+\/locale.po[t]?$",
@@ -142,7 +195,7 @@ S.summit = dict(
 #
 S.branches = [
     dict(id="stable-3_3_0",
-        topdir=S.relpath("../%s/stable-3_3_0/%s/%s" % (os.environ['REPO'], os.environ['BASE'], S.lang)),
+        topdir=S.relpath("../%s/stable-3_3_0/%s/%s" % (os.environ['REPO'], os.environ['BASE'], stableCodeMap.get(S.lang))),
         topdir_templates=S.relpath("../%s/stable-3_3_0/%s/templates" % (os.environ['REPO'], os.environ['BASE'])),
         transform_path=(split_branch_path, join_branch_path)
     ),
